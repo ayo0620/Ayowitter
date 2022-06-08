@@ -13,11 +13,23 @@ public class Tweet {
     public String body;
     public String createdAt;
     public User user;
+    public String ImgUrl;
 
     public Tweet(){}
     public static Tweet fromJson(JSONObject jsonObject) throws JSONException {
         Tweet tweet = new Tweet();
-        tweet.body = jsonObject.getString("text");
+        if(jsonObject.has("full_text"))
+        {
+            tweet.body = jsonObject.getString("full_text");
+        }
+        else{
+            tweet.body = jsonObject.getString("text");
+        }
+
+        if(jsonObject.getJSONObject("entities").has("media"))
+        {
+            tweet.ImgUrl = jsonObject.getJSONObject("entities").getJSONArray("media").getJSONObject(0).getString("media_url_https");
+        }
         tweet.createdAt = jsonObject.getString("created_at");
         tweet.user = User.fromJSON(jsonObject.getJSONObject("user"));
         return tweet;

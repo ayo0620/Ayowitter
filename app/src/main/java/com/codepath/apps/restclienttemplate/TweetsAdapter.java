@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.codepath.apps.restclienttemplate.models.Tweet;
 import com.codepath.apps.restclienttemplate.models.User;
 
@@ -55,19 +56,29 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
         ImageView ivProfileImage;
         TextView tvBody;
         TextView tvScreenName;
+        ImageView ivImageTweet;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             ivProfileImage = itemView.findViewById(R.id.ivProfileImage);
             tvBody = itemView.findViewById(R.id.tvBody);
             tvScreenName = itemView.findViewById(R.id.tvScreenName);
+            ivImageTweet = itemView.findViewById(R.id.ivImageTweet);
         }
 
         public void bind(Tweet tweet)
         {
             tvBody.setText(tweet.body);
             tvScreenName.setText(tweet.user.screenName);
-            Glide.with(context).load(tweet.user.profileImageUrl).into(ivProfileImage);
+            Glide.with(context).load(tweet.user.profileImageUrl).centerCrop().transform(new RoundedCorners(70)).into(ivProfileImage);
+            if(tweet.ImgUrl != null)
+            {
+                Glide.with(context).load(tweet.ImgUrl).into(ivImageTweet);
+                ivImageTweet.setVisibility(View.VISIBLE);
+            }
+            else{
+                ivImageTweet.setVisibility(View.GONE);
+            }
         }
     }
 

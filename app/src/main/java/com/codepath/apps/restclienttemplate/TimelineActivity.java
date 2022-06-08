@@ -92,8 +92,9 @@ public class TimelineActivity extends AppCompatActivity {
             @Override
             public void onSuccess(int statusCode, Headers headers, JSON json) {
                 adapter.clear();
-                // ...the data has come back, add new items to your adapter...
                 adapter.addAll(tweets);
+                // ...the data has come back, add new items to your adapter...
+                populateHomeTimeline();
                 // Now we call setRefreshing(false) to signal refresh has finished
                 swipeContainer.setRefreshing(false);
             }
