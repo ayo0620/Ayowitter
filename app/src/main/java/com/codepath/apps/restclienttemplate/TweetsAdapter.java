@@ -1,6 +1,9 @@
 package com.codepath.apps.restclienttemplate;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Movie;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -19,6 +22,7 @@ import com.codepath.apps.restclienttemplate.models.Tweet;
 import com.codepath.apps.restclienttemplate.models.User;
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
 
+import org.parceler.Parcels;
 import org.w3c.dom.Text;
 
 import java.text.ParseException;
@@ -69,7 +73,7 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
     }
 
     //    Define a viewHolder
-    public class ViewHolder extends RecyclerView.ViewHolder
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener
     {
         ImageView ivProfileImage;
         TextView tvBody;
@@ -80,6 +84,7 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
         TextView tvNumRetweet;
         ImageButton ibFavourite;
         TextView tvFavouriteCount;
+        ImageButton ibReply;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -92,6 +97,7 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
             tvNumRetweet = itemView.findViewById(R.id.tvNumRetweet);
             ibFavourite = itemView.findViewById(R.id.ibFavourite);
             tvFavouriteCount = itemView.findViewById(R.id.tvFavouriteCount);
+            ibReply = itemView.findViewById(R.id.ibReply);
         }
 
         public void bind(Tweet tweet)
@@ -105,15 +111,20 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
             String likesText = String.valueOf(tweet.numLikes);
             tvFavouriteCount.setText(likesText);
 
-            if(tweet.isFavorited)
-            {
-                Drawable newImage = context.getDrawable(R.drawable.ic_vector_heart);
-                ibFavourite.setImageDrawable(newImage);
-            }
-            else{
-                Drawable newImage = context.getDrawable(R.drawable.ic_vector_heart_stroke);
-                ibFavourite.setImageDrawable(newImage);
-            }
+
+            ibReply.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+//                    pop up a composed screen
+                    Intent i = new Intent(context, ComposeActivity.class);
+                    i.putExtra("should_reply_to_tweet", true);
+                    i.putExtra("id_of_tweet_to_reply_to", tweet.id);
+                    i.putExtra("Screenname_of_tweet_to_reply_to", tweet.user.screenName);
+                    ((Activity) context).startActivityForResult(i,TimelineActivity.REQUEST_CODE);
+//                    it will have an extra attribute : in_reply_to_status_id
+                }
+            });
+
             Glide.with(context).load(tweet.user.profileImageUrl).centerCrop().transform(new RoundedCorners(70)).into(ivProfileImage);
             if(tweet.ImgUrl != null)
             {
@@ -123,6 +134,17 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
             else{
                 ivImageTweet.setVisibility(View.GONE);
             }
+
+
+            Drawable newImage;
+            if(tweet.isFavorited)
+            {
+                newImage = context.getDrawable(R.drawable.ic_vector_heart);
+            }
+            else{
+                newImage = context.getDrawable(R.drawable.ic_vector_heart_stroke);
+            }
+            ibFavourite.setImageDrawable(newImage);
 
             ibFavourite.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -139,7 +161,7 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
 
                             @Override
                             public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
-
+                                Log.i("adapter","This favoriting failed!");
                             }
                         });
 
@@ -181,6 +203,18 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
 //                        change the drawable back to btn_star_big_off
                 }
             });
+        }
+
+        @Override
+        public void onClick(View v) {
+            int position = getAdapterPosition();
+            if(position != RecyclerView.NO_POSITION)
+            {
+                Tweet tweet = tweets.get(position);
+                Intent intent = new Intent(context, DetailActivity.class);
+                intent.putExtra(Tweet.class.getSimpleName(), Parcels.wrap(tweet));
+                context.startActivity(intent);
+            }
         }
     }
 

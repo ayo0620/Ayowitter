@@ -40,7 +40,7 @@ public class TimelineActivity extends AppCompatActivity {
 
     private SwipeRefreshLayout swipeContainer;
     public static final String TAG = "TimeLineActivity";
-    private final int REQUEST_CODE = 20;
+    public static final int REQUEST_CODE = 20;
     private EndlessRecyclerViewScrollListener scrollListener;
 
 

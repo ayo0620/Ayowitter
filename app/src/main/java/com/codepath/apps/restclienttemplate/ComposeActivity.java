@@ -27,6 +27,29 @@ public class ComposeActivity extends AppCompatActivity {
     public static final String TAG = "ComposeActivity";
     public static final int MAX_TWEET_LENGTH = 140;
 
+
+    JsonHttpResponseHandler handler =  new JsonHttpResponseHandler() {
+        @Override
+        public void onSuccess(int statusCode, Headers headers, JSON json) {
+            Log.i(TAG, "onSuccess to publish tweet");
+            try {
+                Tweet tweet = Tweet.fromJson(json.jsonObject);
+                Log.i(TAG, "Published tweets says" + tweet.body);
+                Intent intent = new Intent();
+                intent.putExtra("tweet", Parcels.wrap(tweet));
+                setResult(RESULT_OK, intent);
+                finish();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        @Override
+        public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
+            Log.e(TAG, "onFailure to publish tweet", throwable);
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,28 +74,17 @@ public class ComposeActivity extends AppCompatActivity {
                     Toast.makeText(ComposeActivity.this, "Sorry, your tweet is too long", Toast.LENGTH_LONG).show();
                 }
 
+//                If we're replying to a Tweet
+                if(getIntent().hasExtra("should_reply_to_tweet"))
+                {
+                    String idOfTweetToReplyTo = getIntent().getStringExtra("id_of_tweet_to_reply_to");
+                    String screenname = getIntent().getStringExtra("Screenname_of_tweet_to_reply_to");
+                        client.replyToTweet(idOfTweetToReplyTo,"@"+ screenname+" "+tweetContent, handler);
+              }else
+                {
 //               Make API call to tweet to publish the tweet
-                client.publishTweet(tweetContent, new JsonHttpResponseHandler() {
-                    @Override
-                    public void onSuccess(int statusCode, Headers headers, JSON json) {
-                        Log.i(TAG, "onSuccess to publish tweet");
-                        try {
-                            Tweet tweet = Tweet.fromJson(json.jsonObject);
-                            Log.i(TAG, "Published tweets says"+ tweet.body);
-                            Intent intent = new Intent();
-                            intent.putExtra("tweet", Parcels.wrap(tweet));
-                            setResult(RESULT_OK, intent);
-                            finish();
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
-                        Log.e(TAG, "onFailure to publish tweet", throwable);
-                    }
-                });
+                    client.publishTweet(tweetContent,handler);
+                }
             }
         });
     }
