@@ -73,7 +73,7 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
     }
 
     //    Define a viewHolder
-    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener
+    public class ViewHolder extends RecyclerView.ViewHolder
     {
         ImageView ivProfileImage;
         TextView tvBody;
@@ -203,18 +203,6 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
 //                        change the drawable back to btn_star_big_off
                 }
             });
-        }
-
-        @Override
-        public void onClick(View v) {
-            int position = getAdapterPosition();
-            if(position != RecyclerView.NO_POSITION)
-            {
-                Tweet tweet = tweets.get(position);
-                Intent intent = new Intent(context, DetailActivity.class);
-                intent.putExtra(Tweet.class.getSimpleName(), Parcels.wrap(tweet));
-                context.startActivity(intent);
-            }
         }
     }
 

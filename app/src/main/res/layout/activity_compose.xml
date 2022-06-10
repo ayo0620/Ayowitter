@@ -8,26 +8,25 @@
     android:background="@color/medium_gray"
     tools:context=".ComposeActivity">
 
-    <com.google.android.material.textfield.TextInputLayout
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:counterEnabled="true"
-        app:counterMaxLength="140">
-    <EditText
-        android:id="@+id/etCompose"
+        android:background="@color/twitter_blue"
+        android:minHeight="?attr/actionBarSize"
+        app:titleTextColor="@android:color/white"></androidx.appcompat.widget.Toolbar>
+
+    <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:layout_marginStart="5dp"
-        android:layout_marginTop="5dp"
-        android:ems="10"
-        android:gravity="start|top"
-        android:hint="@string/what_s_happening"
-        android:inputType="textMultiLine"
-        android:minLines="5" />
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="175dp"
+        android:layout_marginEnd="10dp"
+        app:counterEnabled="true"
+        app:counterMaxLength="140">
+
     </com.google.android.material.textfield.TextInputLayout>
 
     <Button
@@ -35,9 +34,26 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
-        android:textColor="#FBFBFB"
-        android:backgroundTint="@color/twitter_blue"
-        android:layout_marginTop="165dp"
+        android:layout_marginTop="215dp"
         android:layout_marginEnd="5dp"
-        android:text="@string/tweet" />
-    </RelativeLayout>
+        android:backgroundTint="@color/twitter_blue"
+        android:text="@string/tweet"
+        android:textColor="#FBFBFB" />
+
+    <EditText
+        android:id="@+id/etCompose"
+        android:layout_width="match_parent"
+        android:layout_height="140dp"
+        android:layout_below="@+id/toolbar"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="3dp"
+        android:layout_marginTop="0dp"
+        android:layout_marginEnd="0dp"
+        android:ems="10"
+        android:gravity="start|top"
+        android:hint="@string/what_s_happening"
+        android:inputType="textMultiLine"
+        android:minLines="5" />
+</RelativeLayout>
