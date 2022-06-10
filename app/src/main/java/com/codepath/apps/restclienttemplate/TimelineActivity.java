@@ -36,6 +36,7 @@ public class TimelineActivity extends AppCompatActivity {
     List<Tweet>tweets;
     TweetsAdapter adapter;
     Button logOutBtn;
+    //testing stuff
 
     private SwipeRefreshLayout swipeContainer;
     public static final String TAG = "TimeLineActivity";
