@@ -14,10 +14,15 @@ public class Tweet {
     public String createdAt;
     public User user;
     public String ImgUrl;
+    public String date;
+    public String id;
 
     public Tweet(){}
     public static Tweet fromJson(JSONObject jsonObject) throws JSONException {
         Tweet tweet = new Tweet();
+
+        tweet.id = jsonObject.getString("id_str");
+
         if(jsonObject.has("full_text"))
         {
             tweet.body = jsonObject.getString("full_text");

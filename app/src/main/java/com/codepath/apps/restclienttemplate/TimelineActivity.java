@@ -4,6 +4,7 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -39,11 +40,16 @@ public class TimelineActivity extends AppCompatActivity {
     private SwipeRefreshLayout swipeContainer;
     public static final String TAG = "TimeLineActivity";
     private final int REQUEST_CODE = 20;
+    private EndlessRecyclerViewScrollListener scrollListener;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_timeline);
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
         swipeContainer = (SwipeRefreshLayout) findViewById(R.id.swipeContainer);
 
@@ -53,7 +59,7 @@ public class TimelineActivity extends AppCompatActivity {
                 // Your code to refresh the list here.
                 // Make sure you call swipeContainer.setRefreshing(false)
                 // once the network request has completed successfully.
-                fetchTimelineAsync(0);
+                fetchTimelineAsync(0,null);
             }
         });
 
@@ -78,23 +84,38 @@ public class TimelineActivity extends AppCompatActivity {
 //        intalize the list of tweets and adpater
         tweets = new ArrayList<>();
         adapter = new TweetsAdapter(this, tweets);
+        LinearLayoutManager llm = new LinearLayoutManager(this);
 //        setup Layout manager and adapter
-        rvTweets.setLayoutManager(new LinearLayoutManager(this));
+        rvTweets.setLayoutManager(llm);
+
         rvTweets.setAdapter(adapter);
-        populateHomeTimeline();
+        populateHomeTimeline(null);
+
+        // Retain an instance so that you can call `resetState()` for fresh searches
+        scrollListener = new EndlessRecyclerViewScrollListener(llm) {
+            @Override
+            public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
+                // Triggered only when new data needs to be appended to the list
+                // Add whatever code is needed to append new items to the bottom of the list
+                Tweet lastTweetBeingDisplayed = tweets.get(tweets.size()-1);
+                String maxId = lastTweetBeingDisplayed.id;
+                populateHomeTimeline(maxId);
+            }
+        };
+        rvTweets.addOnScrollListener(scrollListener);
     }
 
-    public void fetchTimelineAsync(int page) {
+    public void fetchTimelineAsync(int page,String maxId) {
         // Send the network request to fetch the updated data
         // `client` here is an instance of Android Async HTTP
         // getHomeTimeline is an example endpoint.
-        client.getInterestingnessList(new JsonHttpResponseHandler() {
+        client.getHomeTimeline(maxId,new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Headers headers, JSON json) {
                 adapter.clear();
                 adapter.addAll(tweets);
                 // ...the data has come back, add new items to your adapter...
-                populateHomeTimeline();
+                populateHomeTimeline(null);
                 // Now we call setRefreshing(false) to signal refresh has finished
                 swipeContainer.setRefreshing(false);
             }
@@ -125,6 +146,7 @@ public class TimelineActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         if(requestCode == REQUEST_CODE && resultCode == RESULT_OK)
@@ -141,16 +163,18 @@ public class TimelineActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-    private void populateHomeTimeline() {
-        client.getInterestingnessList(new JsonHttpResponseHandler() {
+    private void populateHomeTimeline(String maxId) {
+        client.getHomeTimeline(maxId,new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Headers headers, JSON json) {
                 JSONArray jsonArray = json.jsonArray;
                 try {
                     tweets.addAll(Tweet.fromJsonArray(jsonArray));
                     adapter.notifyDataSetChanged();
+                    swipeContainer.setRefreshing(false);
                 } catch (JSONException e) {
                     Log.e(TAG, "Json exception", e);
+                    e.printStackTrace();
                 }
             }
 
@@ -160,6 +184,7 @@ public class TimelineActivity extends AppCompatActivity {
             }
         });
     }
+
 
     void onLogoutButton() {
         // forget who's logged in
