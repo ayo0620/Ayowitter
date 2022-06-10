@@ -54,7 +54,6 @@ public class TwiiterClient extends OAuthBaseClient {
 		{
 			params.put("max_id",maxId);
 		}
-		params.put("tweet_mods","extended");
 		client.get(apiUrl, params, handler);
 	}
 
@@ -63,6 +62,22 @@ public class TwiiterClient extends OAuthBaseClient {
 		// Can specify query string params directly or through RequestParams.
 		RequestParams params = new RequestParams();
 		params.put("status", tweetContent);
+		client.post(apiUrl, params,"", handler);
+	}
+
+	public void favorite(String tweetId, JsonHttpResponseHandler handler) {
+		String apiUrl = getApiUrl("statuses/update.json/create.json");
+		// Can specify query string params directly or through RequestParams.
+		RequestParams params = new RequestParams();
+		params.put("id", tweetId);
+		client.post(apiUrl, params,"", handler);
+	}
+
+	public void unfavorite(String tweetId, JsonHttpResponseHandler handler) {
+		String apiUrl = getApiUrl("statuses/update.json/destroy.json");
+		// Can specify query string params directly or through RequestParams.
+		RequestParams params = new RequestParams();
+		params.put("id", tweetId);
 		client.post(apiUrl, params,"", handler);
 	}
 

@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_margin="5dp">
 
@@ -24,16 +24,19 @@
         android:layout_marginStart="5dp"
         android:layout_marginTop="0dp"
         android:layout_toEndOf="@+id/ivProfileImage"
+        android:textColor="#0C0C0C"
         tools:text="Ayomide123" />
 
     <TextView
         android:id="@+id/tvTime"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/tvScreenName"
         android:layout_alignParentTop="true"
-        android:layout_marginStart="34dp"
+        android:layout_marginStart="15dp"
         android:layout_marginTop="0dp"
-        android:layout_toEndOf="@+id/tvScreenName"
+        android:layout_marginBottom="0dp"
+        android:layout_toEndOf="@+id/tvHandle"
         tools:text="Time" />
 
     <TextView
@@ -44,7 +47,7 @@
         android:layout_marginStart="5dp"
         android:layout_marginTop="2dp"
         android:layout_toEndOf="@+id/ivProfileImage"
-        tools:text="This is my tweet"/>
+        tools:text="This is my tweet" />
 
     <ImageView
         android:id="@+id/ivImageTweet"
@@ -61,12 +64,95 @@
         android:scaleType="centerCrop"
         tools:srcCompat="@tools:sample/avatars" />
 
+    <ImageButton
+        android:id="@+id/ibRetweetBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="13dp"
+        android:layout_below="@+id/ivImageTweet"
+        android:layout_alignBottom="@+id/divider"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="57dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="14dp"
+        android:background="@color/medium_gray"
+        android:src="@drawable/ic_vector_retweet_stroke" />
+
+    <TextView
+        android:id="@+id/tvNumRetweet"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/ivImageTweet"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="10dp"
+        android:layout_toEndOf="@+id/ibRetweetBtn"
+        tools:text="120" />
+
+    <ImageButton
+        android:id="@+id/ibFavourite"
+        android:layout_width="wrap_content"
+        android:layout_height="15dp"
+        android:layout_below="@+id/ivImageTweet"
+        android:layout_alignBottom="@+id/divider"
+        android:layout_marginStart="68dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:layout_toEndOf="@+id/tvNumRetweet"
+        android:background="@color/medium_gray"
+        android:src="@drawable/ic_vector_heart_stroke" />
+
+    <TextView
+        android:id="@+id/tvFavouriteCount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/ivImageTweet"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="10dp"
+        android:layout_toEndOf="@+id/ibFavourite"
+        tools:text="120" />
+
+    <ImageButton
+        android:id="@+id/ibMsg"
+        android:layout_width="wrap_content"
+        android:layout_height="15dp"
+        android:layout_below="@+id/ivImageTweet"
+        android:layout_alignBottom="@+id/divider"
+        android:layout_marginStart="68dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:layout_toEndOf="@+id/tvFavouriteCount"
+        android:background="@color/medium_gray"
+        android:src="@drawable/ic_vector_messages_stroke" />
+
+    <TextView
+        android:id="@+id/tvNumMsg"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/ivImageTweet"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="57dp"
+        android:layout_marginBottom="5dp"
+        android:layout_toEndOf="@+id/ibMsg"
+        tools:text="120" />
+
     <View
         android:id="@+id/divider"
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_below="@+id/ivImageTweet"
         android:layout_alignParentStart="true"
-        android:background="?android:attr/listDivider"
-        android:layout_marginTop="5dp" />
+        android:layout_marginTop="40dp"
+        android:background="?android:attr/listDivider" />
+
+    <TextView
+        android:id="@+id/tvHandle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/tvScreenName"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="0dp"
+        android:layout_marginBottom="0dp"
+        android:layout_toEndOf="@+id/tvScreenName"
+        android:text="handle" />
 </RelativeLayout>

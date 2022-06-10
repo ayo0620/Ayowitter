@@ -15,10 +15,20 @@ public class Tweet {
     public User user;
     public String ImgUrl;
     public String date;
+    public int numRetweet;
+    public int numLikes;
     public String id;
+    public boolean isFavorited;
+    public boolean isRetweet;
+
 
     public Tweet(){}
     public static Tweet fromJson(JSONObject jsonObject) throws JSONException {
+        if(jsonObject.has("retweeted_status"))
+        {
+            return null;
+        }
+
         Tweet tweet = new Tweet();
 
         tweet.id = jsonObject.getString("id_str");
@@ -37,6 +47,10 @@ public class Tweet {
         }
         tweet.createdAt = jsonObject.getString("created_at");
         tweet.user = User.fromJSON(jsonObject.getJSONObject("user"));
+        tweet.numRetweet = jsonObject.getInt("retweet_count");
+        tweet.numLikes = jsonObject.getInt( "favorite_count");
+        tweet.isFavorited = jsonObject.getBoolean("favorited");
+        tweet.isRetweet = jsonObject.getBoolean("retweeted");
         return tweet;
     }
 
@@ -44,7 +58,11 @@ public class Tweet {
         List<Tweet> tweets = new ArrayList<>();
         for(int i=0; i<jsonArray.length();i++)
         {
-            tweets.add(fromJson(jsonArray.getJSONObject(i)));
+            Tweet newTweet = fromJson(jsonArray.getJSONObject(i));
+            if(newTweet != null)
+            {
+                tweets.add(newTweet);
+            }
         }
         return tweets;
     }

@@ -1,10 +1,12 @@
 package com.codepath.apps.restclienttemplate;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -15,6 +17,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.codepath.apps.restclienttemplate.models.Tweet;
 import com.codepath.apps.restclienttemplate.models.User;
+import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
 
 import org.w3c.dom.Text;
 
@@ -22,6 +25,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Locale;
+
+import okhttp3.Headers;
 
 public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder> {
     Context context;
@@ -71,6 +76,10 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
         TextView tvScreenName;
         ImageView ivImageTweet;
         TextView tvTime;
+        TextView tvHandle;
+        TextView tvNumRetweet;
+        ImageButton ibFavourite;
+        TextView tvFavouriteCount;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -79,13 +88,32 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
             tvScreenName = itemView.findViewById(R.id.tvScreenName);
             ivImageTweet = itemView.findViewById(R.id.ivImageTweet);
             tvTime = itemView.findViewById(R.id.tvTime);
+            tvHandle = itemView.findViewById(R.id.tvHandle);
+            tvNumRetweet = itemView.findViewById(R.id.tvNumRetweet);
+            ibFavourite = itemView.findViewById(R.id.ibFavourite);
+            tvFavouriteCount = itemView.findViewById(R.id.tvFavouriteCount);
         }
 
         public void bind(Tweet tweet)
         {
             tvBody.setText(tweet.body);
-            tvScreenName.setText(tweet.user.screenName);
+            tvScreenName.setText(tweet.user.name);
             tvTime.setText(getRelativeTimeAgo(tweet.createdAt));
+            tvHandle.setText("@"+tweet.user.screenName);
+            String retText = String.valueOf(tweet.numRetweet);
+            tvNumRetweet.setText(retText);
+            String likesText = String.valueOf(tweet.numLikes);
+            tvFavouriteCount.setText(likesText);
+
+            if(tweet.isFavorited)
+            {
+                Drawable newImage = context.getDrawable(R.drawable.ic_vector_heart);
+                ibFavourite.setImageDrawable(newImage);
+            }
+            else{
+                Drawable newImage = context.getDrawable(R.drawable.ic_vector_heart_stroke);
+                ibFavourite.setImageDrawable(newImage);
+            }
             Glide.with(context).load(tweet.user.profileImageUrl).centerCrop().transform(new RoundedCorners(70)).into(ivProfileImage);
             if(tweet.ImgUrl != null)
             {
@@ -95,6 +123,64 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
             else{
                 ivImageTweet.setVisibility(View.GONE);
             }
+
+            ibFavourite.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // if not already favourited
+                    if(!tweet.isFavorited)
+                    {
+//                        hard: tell twitter we want to favourite this
+                        TwitterApp.getRestClient(context).favorite(tweet.id, new JsonHttpResponseHandler() {
+                            @Override
+                            public void onSuccess(int statusCode, Headers headers, JSON json) {
+                                Log.i("adapter","This should have been favorited, go check!");
+                            }
+
+                            @Override
+                            public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
+
+                            }
+                        });
+
+
+                        //   tell twitter I want to favourite this
+                        //  change the drawable to btn_star_on
+                        tweet.isFavorited = true;
+                        Drawable newImage = context.getDrawable(R.drawable.ic_vector_heart);
+                        ibFavourite.setImageDrawable(newImage);
+
+//                        increase number of likes
+                        tweet.numLikes +=1;
+                        tvFavouriteCount.setText(String.valueOf(tweet.numLikes));
+                    }
+
+//                  else if already favourited
+                    else
+                    {
+                        TwitterApp.getRestClient(context).unfavorite(tweet.id, new JsonHttpResponseHandler() {
+                            @Override
+                            public void onSuccess(int statusCode, Headers headers, JSON json) {
+                                Log.i("adapter","This should have been unfavorited, go check!");
+                            }
+
+                            @Override
+                            public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
+
+                            }
+                        });
+
+                        tweet.isFavorited = false;
+                        Drawable newImage = context.getDrawable(R.drawable.ic_vector_heart_stroke);
+                        ibFavourite.setImageDrawable(newImage);
+
+                        tweet.numLikes -=1;
+                        tvFavouriteCount.setText(String.valueOf(tweet.numLikes));
+                    }
+//                        tell twitter I want to unfavourite this
+//                        change the drawable back to btn_star_big_off
+                }
+            });
         }
     }
 
