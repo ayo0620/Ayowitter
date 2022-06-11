@@ -47,9 +47,9 @@ The following **additional** features are implemented:
 
 Here's a walkthrough of implemented user stories:
 
-<img src='http://i.imgur.com/link/to/your/gif/file.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
+<img src="https://github.com/ayo0620/Ayowitter/blob/master/ezgif.com-gif-maker-2.gif" width=250><br>
 
-GIF created with [Kap](https://ezgif.com/video-to-gif/ezgif-5-97798bf482.mov).
+GIF created with [Kap]().
 
 ## Notes
 
